@@ -1,5 +1,3 @@
-import random
-
 import pygame
 
 
@@ -30,19 +28,17 @@ class Cell:
             self.neighbours.append(population[(width * self.y) + self.x + 1])
 
     def update(self):
-        live_neighbours = [n for n in self.neighbours if n.alive]
+        live_neighbours = len([n for n in self.neighbours if n.alive])
         if self.alive:
-            if len(live_neighbours) < 2:
-                self.alive = False
-            elif len(live_neighbours) > 3:
+            if live_neighbours < 2 or live_neighbours > 3:
                 self.alive = False
         else:
-            if len(live_neighbours) == 3:
+            if live_neighbours == 3:
                 self.alive = True
 
     def draw(self, screen):
         if self.alive:
-            pygame.draw.rect(screen, (160, 255, 20), (self.x*4, self.y*4, 4, 4))
+            pygame.draw.rect(screen, (160, 255, 20), (self.x * 4, self.y * 4, 4, 4))
 
 
 class Population:
@@ -50,7 +46,7 @@ class Population:
         self.population = []
         for y in range(height):
             for x in range(width):
-                self.population.append(Cell(x, y, random.randrange(100) > 90))
+                self.population.append(Cell(x, y, False))
         for y in range(height):
             for x in range(width):
                 self.population[(y * width) + x].init_neighbours(x, y, width, height, self.population)
@@ -65,13 +61,37 @@ class Population:
             for x in range(width):
                 self.population[(y * width) + x].update()
 
+    def toggle_cell(self, width, scale, pos):
+        cell_x = int(pos[0] / scale)
+        cell_y = int(pos[1] / scale)
+        cell = self.population[(cell_y * width) + cell_x]
+        cell.alive = not cell.alive
+
 
 def life_game(width, height):
     pygame.init()
-    screen = pygame.display.set_mode((width*4, height*4))
+    screen_scale = 4
+    screen = pygame.display.set_mode((width * screen_scale, height * screen_scale))
     population = Population(width, height)
 
     clock = pygame.time.Clock()
+
+    while True:
+        clock.tick(60)
+
+        event = pygame.event.poll()
+        if event.type == pygame.QUIT:
+            return
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            break
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            population.toggle_cell(width, screen_scale, event.pos)
+
+        screen.fill((100, 100, 100))
+
+        population.draw(screen, width, height)
+
+        pygame.display.flip()
 
     while True:
         clock.tick(60)
