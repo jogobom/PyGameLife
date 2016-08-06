@@ -10,7 +10,7 @@ class PreGameState(GameState):
         self.drawing = False
 
     def update(self, clock):
-        clock.tick(120)
+        clock.tick(240)
 
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
@@ -20,6 +20,7 @@ class PreGameState(GameState):
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.drawing = True
         elif event.type == pygame.MOUSEBUTTONUP:
+            self.population.set_cell(self.width, self.scale, event.pos)
             self.drawing = False
         elif event.type == pygame.MOUSEMOTION and self.drawing:
             self.population.set_cell(self.width, self.scale, event.pos)
