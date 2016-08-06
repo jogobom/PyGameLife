@@ -14,11 +14,9 @@ def life_game(width, height):
     state = PreGameState(population, width, height, screen_scale)
 
     while True:
-        clock.tick(60)
-
         screen.fill((100, 100, 100))
 
-        state = state.update()
+        state = state.update(clock)
         if state is None:
             return
 

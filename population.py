@@ -21,8 +21,8 @@ class Population:
             for x in range(width):
                 self.population[(y * width) + x].update()
 
-    def toggle_cell(self, width, scale, pos):
+    def set_cell(self, width, scale, pos):
         cell_x = int(pos[0] / scale)
         cell_y = int(pos[1] / scale)
         cell = self.population[(cell_y * width) + cell_x]
-        cell.alive = not cell.alive
+        cell.alive = True
